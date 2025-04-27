@@ -1,5 +1,6 @@
 ***Overview***
 This C++ program demonstrates the impact of memory access patterns on cache performance.
+
 Specifically, it compares:
 **Sequential Access**: Reading consecutive elements of an array.
 **Strided Access**: Reading elements at regular strides (every 64th element).
