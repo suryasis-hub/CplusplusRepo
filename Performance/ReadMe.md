@@ -14,20 +14,6 @@ Concepts Demonstrated
 **Spatial Locality**: Sequential memory access benefits from preloading nearby data, improving performance.
 
 **Cache Misses**: Strided access increases cache misses, causing more expensive memory fetches from RAM.
-Code Details
-
-Array Setup:
-A large array arr of size 64 million integers (roughly 256MB) is created and initialized to 1.
-
-Sequential Access:
-The program reads 1 out of every 64 elements sequentially (i++ from 0 to size/64).
-Simulates tight spatial locality.
-Strided Access:
-The program reads elements with a stride of 64 (i += stride).
-Simulates strided memory access that skips through the array.
-Timing Measurement:
-The chrono library measures elapsed time for both access patterns.
-Results printed in milliseconds.
 
 **Expected Results**
 Sequential access should be faster than strided access.
