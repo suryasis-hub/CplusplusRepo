@@ -20,4 +20,5 @@ Sequential access should be faster than strided access.
 Strided access causes more cache misses, leading to higher traversal time.
 
 ✅ Sequential access utilizes each loaded cache line efficiently.
+
 ❌ Strided access causes partial cache line usage and frequent misses.
