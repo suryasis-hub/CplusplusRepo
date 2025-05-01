@@ -1,0 +1,75 @@
+#include <iostream>
+#include <vector>
+#include <chrono>
+
+using namespace std;
+using namespace std::chrono;
+
+const int sizeOfVal = 1024 * 1024 * 21; 
+
+// Array of structures
+struct Particle {
+    float x, y, z;
+    float vx, vy, vz;
+};
+
+// Structure of arrays
+struct ParticleSoA {
+    vector<float> x, y, z;
+    vector<float> vx, vy, vz;
+
+    ParticleSoA(int n) : x(n), y(n), z(n), vx(n), vy(n), vz(n) {}
+};
+//Bad when it is only partial access.
+long long updateAoS(vector<Particle>& particles) {
+    long long checksum = 0;
+    for (int i = 0; i < sizeOfVal; ++i) {
+        particles[i].x += particles[i].vx;
+        // Comment out these lines and you see the magic.
+        // particles[i].y += particles[i].vy;
+       // particles[i].z += particles[i].vz;
+        checksum += particles[i].x;
+    }
+    return checksum;
+}
+
+long long updateSoA(ParticleSoA& particles) {
+    long long checksum = 0;
+    for (int i = 0; i < sizeOfVal; ++i) {
+        particles.x[i] += particles.vx[i];
+        // Comment out these lines and you see the magic.
+        // particles.y[i] += particles.vy[i];
+       //  particles.z[i] += particles.vz[i];
+        checksum += particles.x[i];
+    }
+    return checksum;
+}
+
+int main() {
+    vector<Particle> particlesAoS(sizeOfVal);
+    for (int i = 0; i < sizeOfVal; ++i) {
+        particlesAoS[i] = {1, 2, 3, 1, 1, 1};
+    }
+
+    ParticleSoA particlesSoA(sizeOfVal);
+    for (int i = 0; i < sizeOfVal; ++i) {
+        particlesSoA.x[i] = 1;
+        particlesSoA.y[i] = 2;
+        particlesSoA.z[i] = 3;
+        particlesSoA.vx[i] = 1;
+        particlesSoA.vy[i] = 1;
+        particlesSoA.vz[i] = 1;
+    }
+
+    auto start = high_resolution_clock::now();
+    long long sum1 = updateAoS(particlesAoS);
+    auto end = high_resolution_clock::now();
+    cout << "AoS Update Time: " << duration_cast<milliseconds>(end - start).count() << " ms, Checksum: " << sum1 << "\n";
+
+    start = high_resolution_clock::now();
+    long long sum2 = updateSoA(particlesSoA);
+    end = high_resolution_clock::now();
+    cout << "SoA Update Time: " << duration_cast<milliseconds>(end - start).count() << " ms, Checksum: " << sum2 << "\n";
+
+    return 0;
+}
